@@ -3,6 +3,13 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Currency(models.Model):
+
+    OPENEXCHANGERATES = 'openexchangerates'
+
+    #TODO: perhaps refactor this to be generated from a settings config
+    SOURCE_CHOICES = (
+        (OPENEXCHANGERATES, _('OpenExchangeRates')),)
+
     code = models.CharField(_('code'), max_length=3)
     name = models.CharField(_('name'), max_length=35)
     symbol = models.CharField(_('symbol'), max_length=4, blank=True)
@@ -14,6 +21,12 @@ class Currency(models.Model):
         help_text=_('Make this the base currency against which rates are calculated.'))
     is_default = models.BooleanField(_('default'), default=False,
         help_text=_('Make this the default user currency.'))
+    source = models.CharField(_('Rates source'), max_length=50,
+        choices=SOURCE_CHOICES,
+        default=OPENEXCHANGERATES,
+        help_text=_('Specifies the source service to use updating rates.'))
+    rate_interval = models.PositiveIntegerField(_('Rates update interval'), default=3600,
+        help_text=_('intervals at which this currency is updated from its source. Defaults to 1 hour.'))
 
     class Meta:
         ordering = ('name', )
