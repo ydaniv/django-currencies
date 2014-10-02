@@ -47,3 +47,7 @@ class Currency(models.Model):
 
     def to_base(self, price):
         return utils.price_to_base(price, self)
+
+    @classmethod
+    def price_to_base(cls, price, code):
+        return cls.objects.get(code__exact=code).to_base(price)
