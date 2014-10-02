@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from . import utils
 
 
 class Currency(models.Model):
@@ -14,7 +15,7 @@ class Currency(models.Model):
     name = models.CharField(_('name'), max_length=35)
     symbol = models.CharField(_('symbol'), max_length=4, blank=True)
     factor = models.DecimalField(_('factor'), max_digits=30, decimal_places=10,
-        help_text=_('Specifies the difference of the currency to default one.'))
+        help_text=_('Specifies the difference of the currency to base one.'))
     is_active = models.BooleanField(_('active'), default=True,
         help_text=_('The currency will be available.'))
     is_base = models.BooleanField(_('base'), default=False,
@@ -43,3 +44,6 @@ class Currency(models.Model):
         if self.is_default:
             Currency.objects.filter(is_default=True).update(is_default=False)
         super(Currency, self).save(**kwargs)
+
+    def to_base(self, price):
+        return utils.price_to_base(price, self)
