@@ -19,8 +19,6 @@ class Currency(models.Model):
         help_text=_('The currency will be available.'))
     is_base = models.BooleanField(_('base'), default=False,
         help_text=_('Make this the base currency against which rates are calculated.'))
-    is_default = models.BooleanField(_('default'), default=False,
-        help_text=_('Make this the default user currency.'))
     source = models.CharField(_('Rates source'), max_length=50,
         choices=SOURCE_CHOICES,
         default=OPENEXCHANGERATES,
@@ -40,8 +38,6 @@ class Currency(models.Model):
         # Make sure the base and default currencies are unique
         if self.is_base:
             Currency.objects.filter(is_base=True).update(is_base=False)
-        if self.is_default:
-            Currency.objects.filter(is_default=True).update(is_default=False)
         super(Currency, self).save(**kwargs)
 
     def to_base(self, price):
