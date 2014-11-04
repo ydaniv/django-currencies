@@ -24,7 +24,7 @@ class Currency(models.Model):
         default=OPENEXCHANGERATES,
         help_text=_('Specifies the source service to use updating rates.'))
     rate_interval = models.PositiveIntegerField(_('Rates update interval'), default=3600,
-        help_text=_('intervals at which this currency is updated from its source. Defaults to 1 hour.'))
+        help_text=_('interval, in seconds, at which this currency is updated from its source. Defaults to 1 hour.'))
 
     class Meta:
         ordering = ('name', )
