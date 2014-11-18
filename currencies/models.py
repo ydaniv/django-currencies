@@ -10,7 +10,7 @@ class Currency(models.Model):
     SOURCE_CHOICES = (
         (OPENEXCHANGERATES, _('OpenExchangeRates')),)
 
-    code = models.CharField(_('code'), max_length=3)
+    code = models.CharField(_('code'), max_length=3, unique=True)
     name = models.CharField(_('name'), max_length=35)
     symbol = models.CharField(_('symbol'), max_length=4, blank=True)
     factor = models.DecimalField(_('factor'), max_digits=30, decimal_places=10,
