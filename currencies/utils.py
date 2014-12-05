@@ -1,4 +1,4 @@
-from decimal import Decimal, ROUND_UP
+from decimal import Decimal
 from currencies.models import Currency
 
 
@@ -13,7 +13,7 @@ def calculate_price(price, currency):
     # Now, convert from the base to the given currency
     price = price * currency.factor
 
-    return price.quantize(Decimal("0.01"), rounding=ROUND_UP)
+    return currency.round(price)
 
 
 def price_to_base(price, currency):
@@ -22,4 +22,4 @@ def price_to_base(price, currency):
     # Convert from the given currency to the base currency
     price = price / currency.factor
 
-    return price.quantize(Decimal("0.01"), rounding=ROUND_UP)
+    return currency.round(price)

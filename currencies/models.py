@@ -1,5 +1,7 @@
+from decimal import ROUND_HALF_UP, Decimal
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from . import validators
 
 
 class Currency(models.Model):
@@ -19,6 +21,10 @@ class Currency(models.Model):
         help_text=_('The currency will be available.'))
     is_base = models.BooleanField(_('base'), default=False,
         help_text=_('Make this the base currency against which rates are calculated.'))
+    rounding = models.CharField(_('rounding rules'), max_length=30,
+        default=".01|%s" % ROUND_HALF_UP,
+        validators=[validators.RoundingRuleValidator],
+        help_text=_('Rounding rules for this currency. An exponent and a flag joined by |. E.g: ".01|ROUND_UP"'))
     source = models.CharField(_('Rates source'), max_length=50,
         choices=SOURCE_CHOICES,
         default=OPENEXCHANGERATES,
@@ -39,6 +45,10 @@ class Currency(models.Model):
         if self.is_base:
             Currency.objects.filter(is_base=True).update(is_base=False)
         super(Currency, self).save(**kwargs)
+
+    def round(self, value):
+        rules = self.rounding.split('|')
+        return Decimal(value).quantize(Decimal(rules[0]), rounding=rules[1])
 
     def to_base(self, price):
         from . import utils
