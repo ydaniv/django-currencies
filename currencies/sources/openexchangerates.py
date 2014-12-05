@@ -1,4 +1,4 @@
-# from datetime import datetime
+from datetime import datetime
 from decimal import Decimal
 import json
 from urllib2 import urlopen
@@ -25,15 +25,15 @@ if OPENEXCHANGERATES_PARAMS:
     CURRENCY_API_URL += '&%s' % '&'.join(pairs)
 
 
-def update(self, **options):
-    # print("Querying currencies at %s" % CURRENCY_API_URL)
+def update():
+    print("Querying currencies at %s" % CURRENCY_API_URL)
     api = urlopen(CURRENCY_API_URL)
     d = json.loads(api.read())
 
-    # if "timestamp" in d:
-    #     print("Rates last updated on %s" % (datetime.fromtimestamp(d["timestamp"]).strftime("%Y-%m-%d %H:%M:%S")))
+    if "timestamp" in d:
+        print("Rates last updated on %s" % (datetime.fromtimestamp(d["timestamp"]).strftime("%Y-%m-%d %H:%M:%S")))
 
-    # i = 0
+    i = 0
 
     for currency in Currency.objects.all():
         if currency.code not in d["rates"]:
@@ -45,9 +45,9 @@ def update(self, **options):
             print("Updating %s rate to %f" % (currency, rate))
             currency.factor = rate
             currency.save()
-            # i += 1
+            i += 1
 
-    # if i == 1:
-    #     print("%i currency updated" % (i))
-    # else:
-    #     print("%i currencies updated" % (i))
+    if i == 1:
+        print("%i currency updated" % i)
+    else:
+        print("%i currencies updated" % i)
