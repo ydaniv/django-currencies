@@ -1,7 +1,12 @@
 from decimal import ROUND_HALF_UP, Decimal
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from . import validators
+
+
+class CurrencyManager(models.Manager):
+    def active(self):
+        return self.get_query_set().filter(is_active=True)
 
 
 class Currency(models.Model):
@@ -31,6 +36,8 @@ class Currency(models.Model):
         help_text=_('Specifies the source service to use updating rates.'))
     rate_interval = models.PositiveIntegerField(_('Rates update interval'), default=3600,
         help_text=_('interval, in seconds, at which this currency is updated from its source. Defaults to 1 hour.'))
+
+    objects = CurrencyManager()
 
     class Meta:
         ordering = ('name', )
